@@ -1,5 +1,6 @@
 import Poseidon.Spec
 import Mathlib.Data.Fintype.BigOperators
+import Mathlib.FieldTheory.Finite.Basic
 
 namespace Poseidon
 
@@ -35,15 +36,32 @@ This ensures `x → x⁵` is a permutation of `Fp`. The factorization of
 factor of 5. -/
 theorem alpha_coprime : Nat.Coprime 5 (Fp.p - 1) := by native_decide
 
+/-- The inverse exponent for `x → x⁵`: the unique `d` with `5d ≡ 1 (mod p-1)`. -/
+private def sboxInvExp : ℕ :=
+  23158417847463239084714197001737581570690445185553248572763741411479974104269
+
+private theorem five_mul_sboxInvExp :
+    5 * sboxInvExp = (Fp.p - 1) * 4 + 1 := by native_decide
+
+private theorem pow_five_mul_sboxInvExp (x : Pasta.Fp) :
+    x ^ (5 * sboxInvExp) = x := by
+  by_cases hx : x = 0
+  · subst hx; simp [five_mul_sboxInvExp]
+  · rw [five_mul_sboxInvExp, pow_add, pow_mul,
+        ZMod.pow_card_sub_one_eq_one hx, one_pow, one_mul, pow_one]
+
 /-- `x → x⁵` is a bijection on `Fp`.
 
-Follows from `gcd(5, p-1) = 1`: the power map on a cyclic group of
-order `n` is bijective iff the exponent is coprime to `n`.
-
-Axiomatized here; the proof requires connecting coprimality to
-bijectivity via finite field theory (Fermat's little theorem +
-cyclic group structure). -/
-axiom sbox_bijective : Function.Bijective sbox
+Proven via Fermat's little theorem: the inverse map is `x → x^d`
+where `5d ≡ 1 (mod p-1)`. -/
+theorem sbox_bijective : Function.Bijective sbox := by
+  rw [Function.bijective_iff_has_inverse]
+  exact ⟨fun x => x ^ sboxInvExp, fun x => by
+    simp only [sbox, ← pow_mul, pow_five_mul_sboxInvExp],
+  fun x => by
+    simp only [sbox, ← pow_mul]
+    rw [show sboxInvExp * 5 = 5 * sboxInvExp from Nat.mul_comm ..]
+    exact pow_five_mul_sboxInvExp x⟩
 
 /-- The S-box maps zero to zero. -/
 @[simp]

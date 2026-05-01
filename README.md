@@ -22,7 +22,7 @@ All definitions and theorems live under the `Poseidon` namespace. Built on top o
 | Permutation | `Poseidon/Spec.lean` | 4 full + 56 partial + 4 full rounds |
 | PoseidonHash | `Poseidon/Spec.lean` | Sponge construction: `[x, y, 2⁶⁵] → permute → extract` |
 | alpha coprimality | `Poseidon/Properties.lean` | `gcd(5, p-1) = 1` — proven by `native_decide` |
-| S-box bijectivity (axiom) | `Poseidon/Properties.lean` | `x → x⁵` is a permutation of Fp |
+| S-box bijectivity | `Poseidon/Properties.lean` | `x → x⁵` is a permutation of Fp — proven via Fermat's little theorem |
 | AddRC bijectivity | `Poseidon/Properties.lean` | Translation is bijective — proven |
 | S-box full/partial bijectivity | `Poseidon/Properties.lean` | Componentwise S-box is bijective — proven |
 | MDS bijectivity (axiom) | `Poseidon/Properties.lean` | MDS matrix is invertible (Cauchy matrix property) |
@@ -31,10 +31,11 @@ All definitions and theorems live under the `Poseidon` namespace. Built on top o
 
 ## Axioms
 
-Two properties are axiomatized (not proven from first principles):
+One property is axiomatized (not proven from first principles):
 
-1. **S-box bijectivity**: `x → x⁵` is a bijection on `Fp`. Justified by `gcd(5, p-1) = 1` (which IS proven via `native_decide`); connecting this to bijectivity requires cyclic group theory.
-2. **MDS invertibility**: the MDS matrix is invertible over `Fp`. Justified by its Cauchy matrix construction with distinct parameters.
+1. **MDS invertibility**: the MDS matrix is invertible over `Fp`. Justified by its Cauchy matrix construction with distinct parameters.
+
+The S-box bijectivity (`x → x⁵` is a bijection on `Fp`) was previously axiomatized but is now **fully proven** via Fermat's little theorem: computing the inverse exponent `d` with `5d ≡ 1 (mod p-1)` and showing `x^(5d) = x` for all `x`.
 
 ## Security argument
 
