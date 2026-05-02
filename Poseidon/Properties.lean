@@ -114,11 +114,57 @@ theorem sboxPartial_bijective : Function.Bijective sboxPartial := by
       ext i; simp only [sboxPartial]
       split <;> simp_all⟩
 
+/-- The inverse MDS matrix. -/
+private def mdsInvMatrix : Fin t → Fin t → Pasta.Fp := fun i j =>
+  if i.val = 0 then
+    if j.val = 0 then 20241607003636850108660836115940502736811498405161200570689148677571525758571
+    else if j.val = 1 then 23025138405716231373797697921576452089394779832936284534415647586071677203830
+    else 21114470993121751666622391512824860651712966646298666275694910489305939207392
+  else if i.val = 1 then
+    if j.val = 0 then 3504033996059159311740309710248240756957113985486095525011622326035730769568
+    else if j.val = 1 then 19414840413788828401816890242172608374848052910344543636209619190950790406233
+    else 4217244064506252798101134783726078418056517622403921972441329684677055612801
+  else
+    if j.val = 0 then 21618660570245270623069891679058806165723984266207336981665295036319267277064
+    else if j.val = 1 then 13921368629272394430455146883034263447975556794517869272975033952323006867723
+    else 5901593508136776399775545089468732924270234646759139436179418386042074198766
+
+private def mixLayerInv (s : State) : State :=
+  fun i => ∑ j : Fin t, mdsInvMatrix i j * s j
+
+private theorem mds_inv_mul (i j : Fin t) :
+    ∑ k : Fin t, mdsInvMatrix i k * mdsMatrix k j =
+    if i = j then 1 else 0 := by
+  fin_cases i <;> fin_cases j <;>
+    simp only [mdsInvMatrix, mdsMatrix, t] <;>
+    native_decide
+
+private theorem mds_mul_inv (i j : Fin t) :
+    ∑ k : Fin t, mdsMatrix i k * mdsInvMatrix k j =
+    if i = j then 1 else 0 := by
+  fin_cases i <;> fin_cases j <;>
+    simp only [mdsMatrix, mdsInvMatrix, t] <;>
+    native_decide
+
 /-- The MDS matrix multiplication is a bijection.
 
-Axiomatized: follows from the MDS matrix being invertible over `Fp`,
-which holds because it is a Cauchy matrix with distinct parameters. -/
-axiom mixLayer_bijective : Function.Bijective mixLayer
+Proven by exhibiting the inverse matrix and verifying
+`MDS_INV × MDS = I` and `MDS × MDS_INV = I` via `native_decide`. -/
+theorem mixLayer_bijective : Function.Bijective mixLayer := by
+  rw [Function.bijective_iff_has_inverse]
+  refine ⟨mixLayerInv, fun s => ?_, fun s => ?_⟩
+  · ext i
+    simp only [mixLayerInv, mixLayer]
+    simp_rw [Finset.mul_sum, ← mul_assoc]
+    rw [Finset.sum_comm]
+    simp_rw [← Finset.sum_mul, mds_inv_mul, ite_mul, one_mul, zero_mul,
+             Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+  · ext i
+    simp only [mixLayer, mixLayerInv]
+    simp_rw [Finset.mul_sum, ← mul_assoc]
+    rw [Finset.sum_comm]
+    simp_rw [← Finset.sum_mul, mds_mul_inv, ite_mul, one_mul, zero_mul,
+             Finset.sum_ite_eq, Finset.mem_univ, ite_true]
 
 /-! ## Round bijectivity -/
 

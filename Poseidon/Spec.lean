@@ -69,10 +69,23 @@ def sbox (x : Pasta.Fp) : Pasta.Fp := x ^ 5
 There are `totalRounds × t = 192` constants over `Fp`. -/
 axiom roundConstants : Fin totalRounds → Fin t → Pasta.Fp
 
-/-- The 3×3 MDS (Maximum Distance Separable) matrix over `Fp` (axiomatized).
+/-- The 3×3 MDS (Maximum Distance Separable) matrix over `Fp`.
 
-Generated as a Cauchy matrix to guarantee maximal branch number. -/
-axiom mdsMatrix : Fin t → Fin t → Pasta.Fp
+Generated as a Cauchy matrix to guarantee maximal branch number.
+Values from the Zcash Orchard Poseidon instantiation. -/
+def mdsMatrix : Fin t → Fin t → Pasta.Fp := fun i j =>
+  if i.val = 0 then
+    if j.val = 0 then 4844513277385895547578596669280046666372576567380472439333234012806535256931
+    else if j.val = 1 then 22420227485671588580194914215361958133919537309433003325602272145024023440222
+    else 3505906565384614297249013623188452104971681200991017471148427242055139865693
+  else if i.val = 1 then
+    if j.val = 0 then 15918204248318370126242808206081613758525089148509539575126649371340283647612
+    else if j.val = 1 then 17094040714843518372934853765548613673798971581804674915582475057795168500270
+    else 15812769689003694604229247543370933348074043003262912834067271177893884949626
+  else
+    if j.val = 0 then 20880359470746774736726481852287259022559450533689220298394450009637377072100
+    else if j.val = 1 then 13164192954509875252051728398669721690665762613581286296450591265062029506148
+    else 27123552791154096240274588421608257979835967097480491934880175221940903501553
 
 /-! ## Round function components -/
 
