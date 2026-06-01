@@ -14,6 +14,12 @@ Proof chain:
 3. Each full/partial round is a bijection (composition of bijective layers).
 4. `applyRounds_bijective` — iterating bijective rounds preserves bijectivity (induction).
 
+**Sponge-level properties** — connecting `permutation_bijective` to hash security:
+- `poseidonHash_eq` — hash decomposes as squeeze ∘ permutation ∘ absorb.
+- `absorb_permute_injective` — distinct inputs produce distinct post-permutation states (determinism).
+- `domain_separation` — different capacity values can never produce the same output state.
+- `capacity_hiding` — for any rate output, multiple internal states produce it (the capacity is not revealed).
+
 Preimage and collision resistance are **not** proven — they are conjectured from algebraic degree bounds, not derivable from bijectivity alone.
 
 The 192 round constants are concrete 𝔽_p values from the Grain LFSR, cross-checked against the Halo 2 reference implementation.
