@@ -32,6 +32,9 @@ Proof chain:
 **S-box differential uniformity** — defense against differential cryptanalysis:
 - `sbox_differential_uniformity` — for any nonzero difference a, the equation (x+a)⁵ - x⁵ = b has at most 4 solutions (δ ≤ 4).
 
+**MDS branch number** — defense against differential/linear cryptanalysis:
+- `mds_branch_number` — for any nonzero v, hw(v) + hw(Mv) ≥ 4 (maximal branch number for a 3×3 matrix).
+
 Preimage and collision resistance are **not** proven — they are conjectured from algebraic degree bounds, not derivable from bijectivity alone.
 
 The 192 round constants are concrete 𝔽_p values from the Grain LFSR, cross-checked against the Halo 2 reference implementation.
