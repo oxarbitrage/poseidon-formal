@@ -24,6 +24,11 @@ Proof chain:
 - `symFullRound_degBound` / `symPartialRound_degBound` — one round multiplies algebraic degree by ≤ 5.
 - `permutation_degree_bound` — after all 64 rounds, output degree ≤ 5⁶⁴ (interpolation requires ≥ 5⁶⁴ + 1 queries).
 
+**CICO (Constrained-Input Constrained-Output)** — formal security reduction:
+- `CICOInstance` / `IsSolution` — defines the CICO problem as a Lean predicate.
+- `eval_symPermutation` — symbolic permutation agrees with concrete under evaluation.
+- `cico_is_polynomial_root` / `cico_polynomial_degree` — any CICO attack reduces to finding roots of degree-5⁶⁴ polynomials.
+
 Preimage and collision resistance are **not** proven — they are conjectured from algebraic degree bounds, not derivable from bijectivity alone.
 
 The 192 round constants are concrete 𝔽_p values from the Grain LFSR, cross-checked against the Halo 2 reference implementation.
