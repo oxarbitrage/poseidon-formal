@@ -20,6 +20,10 @@ Proof chain:
 - `domain_separation` — different capacity values can never produce the same output state.
 - `capacity_hiding` — for any rate output, multiple internal states produce it (the capacity is not revealed).
 
+**Algebraic degree growth** — defense against interpolation attacks:
+- `symFullRound_degBound` / `symPartialRound_degBound` — one round multiplies algebraic degree by ≤ 5.
+- `permutation_degree_bound` — after all 64 rounds, output degree ≤ 5⁶⁴ (interpolation requires ≥ 5⁶⁴ + 1 queries).
+
 Preimage and collision resistance are **not** proven — they are conjectured from algebraic degree bounds, not derivable from bijectivity alone.
 
 The 192 round constants are concrete 𝔽_p values from the Grain LFSR, cross-checked against the Halo 2 reference implementation.
